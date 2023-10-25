@@ -33,13 +33,6 @@ namespace P04WeatherForecastAPI.Client
         {
             
             City[] cities= await accuWeatherService.GetLocations(txtCity.Text);
-
-            // standardowy sposób dodawania elementów
-            //lbData.Items.Clear();
-            //foreach (var c in cities)
-            //    lbData.Items.Add(c.LocalizedName);
-
-            // teraz musimy skorzystac z bindowania danych bo chcemy w naszej kontrolce przechowywac takze id miasta 
             lbData.ItemsSource = cities;
         }
 

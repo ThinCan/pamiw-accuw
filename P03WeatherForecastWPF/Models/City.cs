@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P03WeatherForecastWPF.Client.Models
 {
-    internal class City
+    public class City
     {
         public int Version { get; set; }
         public string Key { get; set; }

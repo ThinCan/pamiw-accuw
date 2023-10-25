@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P03WeatherForecastWPF.Client.Models
 {
-    internal class Imperial
+    public class Imperial
     {
         public double Value { get; set; }
         public string Unit { get; set; }

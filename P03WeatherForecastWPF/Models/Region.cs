@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace P03WeatherForecastWPF.Client.Models
 {
-    internal class Region
+    public class Region
     {
         public string ID { get; set; }
         public string LocalizedName { get; set; }

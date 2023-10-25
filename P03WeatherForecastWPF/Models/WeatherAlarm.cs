@@ -11,7 +11,7 @@ namespace P03WeatherForecastWPF.Client.Models
         public string AlarmType;
     }
 
-    internal class WeatherAlarm
+    public class WeatherAlarm
     {
         public string Date { get; set; }
         public Alarm Alarms;

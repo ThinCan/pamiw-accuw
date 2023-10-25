@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using P03WeatherForecastWPF.Client.Models;
+using P03WeatherForecastWPF.ViewModels;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -29,14 +30,7 @@ namespace P03WeatherForecastWPF.Client.Services
 
         public AccuWeatherService()
         {
-            //var builder = new ConfigurationBuilder()
-            //    .AddUserSecrets<App>()
-            //    .SetBasePath(Directory.GetCurrentDirectory())
-            //    .AddJsonFile("appsetings.json");
 
-            //var configuration = builder.Build();
-            //api_key = configuration["api_key"];
-            //language = configuration["default_language"];
         }
 
         public async Task<City[]> GetLocations(string locationName)
@@ -51,7 +45,7 @@ namespace P03WeatherForecastWPF.Client.Services
             }
         }
 
-        public async Task<Weather> GetCurrentConditions(string cityKey)
+        public async Task<CurrentConditionViewModel> GetCurrentConditions(string cityKey)
         {
             string uri = base_url + "/" + string.Format(current_conditions_endpoint, cityKey, api_key, language);
             using (HttpClient client = new HttpClient())
@@ -59,7 +53,8 @@ namespace P03WeatherForecastWPF.Client.Services
                 var response = await client.GetAsync(uri);
                 string json = await response.Content.ReadAsStringAsync();
                 Weather[] weathers = JsonConvert.DeserializeObject<Weather[]>(json);
-                return weathers.FirstOrDefault();
+                CurrentConditionViewModel ccvm = new CurrentConditionViewModel(weathers.FirstOrDefault());
+                return ccvm;
             }
         }
 
@@ -76,7 +71,7 @@ namespace P03WeatherForecastWPF.Client.Services
             }
         }
 
-        public async Task<City[]> GetCityNeighbors(City city)
+        public async Task<NeighborCityViewModel[]> GetCityNeighbors(City city)
         {
             string uri = base_url + "/" + string.Format(city_neighbors_endpoint, city.Key, api_key, language);
             using (HttpClient client = new HttpClient())
@@ -84,11 +79,13 @@ namespace P03WeatherForecastWPF.Client.Services
                 var response = await client.GetAsync(uri);
                 string json = await response.Content.ReadAsStringAsync();
                 City[] cities = JsonConvert.DeserializeObject<City[]>(json);
-                return cities;
+                NeighborCityViewModel[] ncities = new NeighborCityViewModel[cities.Length];
+                for(int i=0;i<cities.Length; i++) { ncities[i] = new NeighborCityViewModel(cities[i]); }
+                return ncities;
             }
         }
 
-        public async Task<WeatherAlarm[]> GetCityAlarms(City city)
+        public async Task<CityWeatherAlarmViewModel[]> GetCityAlarms(City city)
         {
             string uri = base_url + "/" + string.Format(city_alarms_endpoint, city.Key, api_key, language);
             using (HttpClient client = new HttpClient())
@@ -96,11 +93,13 @@ namespace P03WeatherForecastWPF.Client.Services
                 var response = await client.GetAsync(uri);
                 string json = await response.Content.ReadAsStringAsync();
                 WeatherAlarm[] alarms = JsonConvert.DeserializeObject<WeatherAlarm[]>(json);
-                return alarms;
+                CityWeatherAlarmViewModel[] ncities = new CityWeatherAlarmViewModel[alarms.Length];
+                for(int i=0;i<alarms.Length; i++) { ncities[i] = new CityWeatherAlarmViewModel(alarms[i]); }
+                return ncities;
             }
         }
 
-        public async Task<WeatherAlarm[]> GetCityAlarms_10Days(City city)
+        public async Task<CityWeatherAlarmViewModel[]> GetCityAlarms_10Days(City city)
         {
             string uri = base_url + "/" + string.Format(city_alarms_10d_endpoint, city.Key, api_key, language);
             using (HttpClient client = new HttpClient())
@@ -108,7 +107,9 @@ namespace P03WeatherForecastWPF.Client.Services
                 var response = await client.GetAsync(uri);
                 string json = await response.Content.ReadAsStringAsync();
                 WeatherAlarm[] alarms = JsonConvert.DeserializeObject<WeatherAlarm[]>(json);
-                return alarms;
+                CityWeatherAlarmViewModel[] ncities = new CityWeatherAlarmViewModel[alarms.Length];
+                for(int i=0;i<alarms.Length; i++) { ncities[i] = new CityWeatherAlarmViewModel(alarms[i]); }
+                return ncities;
             }
         }
 
@@ -124,7 +125,7 @@ namespace P03WeatherForecastWPF.Client.Services
             }
         }
 
-        public async Task<City[]> GetTop10Cities()
+        public async Task<TopCityViewModel[]> GetTop10Cities()
         {
             string uri = base_url + "/" + string.Format(top_10_cities_endpoint, api_key, language);
             using (HttpClient client = new HttpClient())
@@ -132,7 +133,9 @@ namespace P03WeatherForecastWPF.Client.Services
                 var response = await client.GetAsync(uri);
                 string json = await response.Content.ReadAsStringAsync();
                 City[] cities = JsonConvert.DeserializeObject<City[]>(json);
-                return cities;
+                TopCityViewModel[] ncities = new TopCityViewModel[cities.Length];
+                for(int i=0;i<cities.Length; i++) { ncities[i] = new TopCityViewModel(cities[i]); }
+                return ncities;
             }
         }
 

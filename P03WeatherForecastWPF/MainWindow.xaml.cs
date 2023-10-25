@@ -1,6 +1,7 @@
 ﻿using P03WeatherForecastWPF.Client.Models;
 using P03WeatherForecastWPF.Client.Services;
 using P03WeatherForecastWPF.Services;
+using P03WeatherForecastWPF.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +26,17 @@ namespace P03WeatherForecastWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        NeighborCityViewModel NeighborCity { get; set; }
         public MainWindow()
         {
             InitializeComponent();
+
+            var bind1 = new Binding("NeighborCityViewModel.localizedName");
+
+            bind1.Mode = BindingMode.OneWay;
+            bind1.Source = NeighborCity;
+
+            BindingOperations.SetBinding(binding1, TextBlock.TextProperty, bind1);
         }
 
         private void btnGetTemperature_Click(object sender, RoutedEventArgs e)
@@ -241,6 +250,7 @@ namespace P03WeatherForecastWPF
 
                 isCityProcessed = true;
                 lastProcessedCity = cities;
+                NeighborCity = new NeighborCityViewModel(cities);
                 return true;
             }
             return false;
@@ -258,7 +268,7 @@ namespace P03WeatherForecastWPF
             string txt = string.Format("{0} najblizszych miast od miasta \"{1}\":", cities.Length, lastProcessedCity.LocalizedName);
             for (var i = 0; i < cities.Length; ++i)
             {
-                txt += "\n" + cities[i].LocalizedName;
+                txt += "\n" + cities[i].localizedName;
             }
 
             tbTemperature.Text = txt;
@@ -327,7 +337,7 @@ namespace P03WeatherForecastWPF
             string txt = "Oto top 10 miast:";
             foreach(var c in cities)
             {
-                txt += $"\nKraj: {c.Country.LocalizedName}, Miasto: {c.LocalizedName}";
+                txt += $"\nKraj: {c.country.LocalizedName}, Miasto: {c.localizedName}";
             }
             tbTemperature.Text = txt;
         }
@@ -342,7 +352,7 @@ namespace P03WeatherForecastWPF
 
             if (conditions == null) { return; }
 
-            string txt = $"Aktualne warunki pogodowe dla miasta {lastProcessedCity.LocalizedName}:\nTemperatura: {conditions.Temperature.Metric.Value} {conditions.Temperature.Metric.Unit}\nOpis: {conditions.WeatherText}";
+            string txt = $"Aktualne warunki pogodowe dla miasta {lastProcessedCity.LocalizedName}:\nTemperatura: {conditions.Value} {conditions.Unit}\nOpis: {conditions.WeatherText}";
             tbTemperature.Text = txt;
         }
 
