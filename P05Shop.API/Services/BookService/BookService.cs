@@ -1,5 +1,6 @@
 ﻿using P06Shop.Shared;
 using P06Shop.Shared.Services.BookService;
+using P06Shop.Shared.Services.DataBaseService;
 using P06Shop.Shared.Shop;
 using P07Shop.DataSeeder;
 
@@ -11,9 +12,26 @@ namespace P05Shop.API.Services.BookService
         {
             try
             {
+                DatabaseService db = new DatabaseService();
+                var books = db.GetAllBooks().ToArray();
+                if (books.Length == 0)
+                {
+                    books = ProductSeeder.GenerateBookData().ToArray();
+                    for(int i=0; i<books.Length; ++i)
+                    {
+                        Book b = new Book();
+                        b.Title = books[i].Title;
+                        b.Author = books[i].Author;
+                        b.Description = books[i].Description;
+                        books[i] = b;
+                        db.AddBook(ref books[i]);
+                    }
+
+                    books = db.GetAllBooks().ToArray();
+                }
                 var response = new ServiceResponse<List<Book>>()
                 {
-                    Data = ProductSeeder.GenerateBookData(),
+                    Data = books.ToList(),
                     Message = "Ok",
                     Success = true
                 };
@@ -36,7 +54,8 @@ namespace P05Shop.API.Services.BookService
             try
             {
                 if (!ValidateBookOnCreate(b)) { throw new Exception("Cannot create book"); }
-
+                DatabaseService db = new DatabaseService();
+                db.AddBook(ref b);
                 var response = new ServiceResponse<bool>()
                 {
                     Data = true,
@@ -61,7 +80,8 @@ namespace P05Shop.API.Services.BookService
             try
             {
                 if (!ValidateBookOnUpdate(b)) { throw new Exception("Cannot update book"); }
-
+                DatabaseService db = new DatabaseService();
+                db.UpdateBook(b);
                 var response = new ServiceResponse<bool>()
                 {
                     Data = true,
@@ -86,7 +106,8 @@ namespace P05Shop.API.Services.BookService
             try
             {
                 if (!ValidateBookOnDelete(b)) { throw new Exception("Cannot delete book"); }
-
+                DatabaseService db = new DatabaseService();
+                db.DeleteBook(b.Id);
                 var response = new ServiceResponse<bool>()
                 {
                     Data = true,

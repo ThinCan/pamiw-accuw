@@ -1,6 +1,7 @@
 using P05Shop.API.Services.BookService;
 using P05Shop.API.Services.ProductService;
 using P06Shop.Shared.Services.BookService;
+using P06Shop.Shared.Services.DataBaseService;
 using P06Shop.Shared.Services.ProductService;
 
 var builder = WebApplication.CreateBuilder(args);
