@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+</head>
+
+<body>
+    <h1>Products</h1>
+    <div>
+        <button onclick="getProduct()">Get Product</button>
+    </div>
+
+    <div>
+        <label for="productId">Enter Product ID:</label>
+        <input type="text" id="productId" placeholder="Product ID">
+        <button onclick="getProductById()">Get Product by ID</button>
+    </div>
+
+    <div>
+        <label for="updateProductId">Enter Product ID to Update:</label>
+        <input type="text" id="updateProductId" placeholder="Product ID">
+        <br>
+        <label for="updateTitle">Title:</label>
+        <input type="text" id="updateTitle" placeholder="New Title">
+        <br>
+        <label for="updateDescription">description:</label>
+        <input type="text" id="updateDescription" placeholder="New description">
+        <br>
+        <button onclick="updateProduct()">Update Product</button>
+    </div>
+
+    <div>
+        <label for="deleteProductId">Enter Product ID to Delete:</label>
+        <input type="text" id="deleteProductId" placeholder="Product ID">
+        <button onclick="deleteProductById()">Delete Product by ID</button>
+    </div>
+
+    <div id="product-container"></div>
+    <hr>
+    <h1>Books</h1>
+    <div>
+        <button onclick="getBook()">Get Book</button>
+    </div>
+
+    <div>
+        <label for="bookId">Enter Book ID:</label>
+        <input type="text" id="bookId" placeholder="Book ID">
+        <button onclick="getBookById()">Get Book by ID</button>
+    </div>
+
+    <div>
+        <label for="updateBookId">Enter Book ID to Update:</label>
+        <input type="text" id="updateBookId" placeholder="Book ID">
+        <br>
+        <label for="updateBookTitle">Title:</label>
+        <input type="text" id="updateBookTitle" placeholder="New Title">
+        <label for="updateBookDescription">Description:</label>
+        <input type="text" id="updateBookDescription" placeholder="New Description">
+        <label for="updateBookAuthor">Author:</label>
+        <input type="text" id="updateBookAuthor" placeholder="New Author">
+        <br>
+        <button onclick="updateBook()">Update Book</button>
+    </div>
+
+    <div>
+        <label for="deleteBookId">Enter Book ID to Delete:</label>
+        <input type="text" id="deleteBookId" placeholder="Book ID">
+        <button onclick="deleteBookById()">Delete Book by ID</button>
+    </div>
+
+    <div id="book-container"></div>
+
+    <script src="./models/productModel.js"></script>
+    <script src="./views/productView.js"></script>
+    <script src="./controllers/productController.js"></script>
+    <script src="./models/bookModel.js"></script>
+    <script src="./views/bookView.js"></script>
+    <script src="./controllers/bookController.js"></script>
+    <script>
+        const productView = new ProductView();
+        const bookView = new BookView();
+        let productController;
+        let bookController;
+        fetch("./config.json").then(e => e.json()).then(config => {
+            productController = new ProductController(productView, config);
+            bookController = new BookController(bookView, config);
+        }).catch(e => console.error(e));
+
+        const getProduct = () => {
+            productController.fetchProductData();
+        }
+
+        const getProductById = () => {
+            const productId = document.getElementById('productId').value;
+            productController.fetchProductById(productId);
+        }
+
+        const updateProduct = () => {
+            const updateProductId = document.getElementById('updateProductId').value;
+            const updateTitle = document.getElementById('updateTitle').value;
+            const updateDescription = document.getElementById('updateDescription').value;
+
+            const updatedProductData = {
+                id: parseInt(updateProductId),
+                title: updateTitle,
+                description: updateDescription,
+            };
+
+            productController.updateProductData(updatedProductData);
+        }
+
+        const deleteProductById = () => {
+            const deleteProductId = document.getElementById('deleteProductId').value;
+            productController.deleteProductById(deleteProductId);
+        }
+
+        function getBook() {
+            bookController.fetchBookData();
+        }
+
+        function getBookById() {
+            const bookId = document.getElementById('bookId').value;
+            bookController.fetchBookById(bookId);
+        }
+
+        function updateBook() {
+            const updateBookId = document.getElementById('updateBookId').value;
+            const updateBookTitle = document.getElementById('updateBookTitle').value;
+            const updateBookDescription = document.getElementById('updateBookDescription').value;
+            const updateBookAuthor = document.getElementById('updateBookAuthor').value;
+
+            const updatedBookData = {
+                id: parseInt(updateBookId),
+                title: updateBookTitle,
+                description: updateBookDescription,
+                author: updateBookAuthor,
+            };
+
+            bookController.updateBookData(updatedBookData);
+        }
+
+        function deleteBookById() {
+            const deleteBookId = document.getElementById('deleteBookId').value;
+            bookController.deleteBookById(deleteBookId);
+        }
+    </script>
+</body>
+
+</html>

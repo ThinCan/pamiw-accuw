@@ -1,0 +1,4 @@
+{
+    "product_api_url": "localhost:7230/api/Product",
+    "book_api_url": "localhost:7230/api/Book"
+}
