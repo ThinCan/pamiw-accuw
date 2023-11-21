@@ -1,0 +1,110 @@
+﻿@page "/books"
+@using lab6.Shared.Controller
+@using lab6.Shared.Models
+@using lab6.Shared.Services
+@inject HttpClient Http
+@inject Config config
+@inject BookService service
+
+<PageTitle>Books</PageTitle>
+
+<input @bind="@new_book.Title" />
+<label>Title</label>
+<br />
+<input @bind="@new_book.Description" />
+<label>Description</label>
+<br />
+<input @bind="@new_book.Author" />
+<label>Author</label>
+<br />
+<button class="btn btn-success" @onclick="@OnAddClick">Add book</button>
+<br />
+<br />
+<input @bind="@deleteId" />
+<label>Id</label>
+<button class="btn btn-danger" @onclick="@OnDeleteClick">Delete book</button>
+<br />
+<br />
+<input @bind="@update_book.Id" />
+<label>Id</label>
+<br />
+<input @bind="@update_book.Title" />
+<label>Title</label>
+<br />
+<input @bind="@update_book.Description" />
+<label>Description</label>
+<br />
+<input @bind="@update_book.Author" />
+<label>Author</label>
+<br />
+<button class="btn btn-primary" @onclick="@OnUpdateClick">Update book</button>
+
+
+@if (books == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Author</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var book in books)
+			{
+				<tr>
+					<td>@book.Id</td>
+					<td>@book.Title</td>
+					<td>@book.Description</td>
+					<td>@book.Author</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private BookModel[]? books;
+	private int deleteId;
+	private BookModel new_book = new BookModel();
+	private BookModel update_book = new BookModel();
+	private BookController bc;
+	public async void OnDeleteClick()
+	{
+		await bc.RemoveBook(deleteId);
+		RefreshList();
+	}
+	public async void OnAddClick()
+	{
+		await bc.AddBook(new_book);
+		RefreshList();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		bc = new BookController(service);
+		RefreshList();
+	}
+	public async void OnUpdateClick()
+	{
+		await bc.UpdateBook(update_book.Id, update_book);
+		RefreshList();
+	}
+
+	public void RefreshList()
+	{
+		Task.Run(async () =>
+		{
+			books = await new BookService(Http, config).GetBooks();
+			InvokeAsync(StateHasChanged);
+			Console.WriteLine(books.Length);
+		});
+	}
+
+}
